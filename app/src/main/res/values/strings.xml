@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">AllPolls</string>
     <string name="action_settings">Settings</string>
+
+    <string name="my_polls">My Polls</string>
+    <string name="find_polls">Find Polls</string>
 </resources>
