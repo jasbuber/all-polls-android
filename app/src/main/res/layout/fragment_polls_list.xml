@@ -10,4 +10,5 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.jasbuber.allpolls.PollsListFragment"
-    tools:listitem="@layout/fragment_polls_item" />
+    tools:listitem="@layout/fragment_polls_item"
+    style="@style/CommonScreen" />

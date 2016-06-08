@@ -28,5 +28,10 @@
         <item name="android:textColor">@color/colorFont</item>
         <item name="textAllCaps">true</item>
     </style>
+    <style name="CommonScreen">
+        <item name="android:textColor">@color/colorFontDark</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:background">@color/colorBackground</item>
+    </style>
 
 </resources>
