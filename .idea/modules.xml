@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AllPolls.iml" filepath="$PROJECT_DIR$/AllPolls.iml" />
+      <module fileurl="file://$PROJECT_DIR$/all-polls-android.iml" filepath="$PROJECT_DIR$/all-polls-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
