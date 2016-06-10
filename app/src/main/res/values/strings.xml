@@ -4,4 +4,5 @@
 
     <string name="my_polls">My Polls</string>
     <string name="find_polls">Find Polls</string>
+    <string name="title_activity_poll">PollActivity</string>
 </resources>

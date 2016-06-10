@@ -49,6 +49,7 @@ public class MyPollsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mListener = (OnListFragmentInteractionListener) getActivity();
     }
 
     @Override
