@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.jasbuber.allpolls.OnListFragmentInteractionListener;
 import com.jasbuber.allpolls.models.Poll;
 
 import java.util.List;

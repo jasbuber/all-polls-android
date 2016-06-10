@@ -45,8 +45,7 @@ public class PollsListFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) view;
 
             recyclerView.setLayoutManager(new GridLayoutManager(context, columnsNr));
-            Log.d("view is a recycler view", "view is a recycler view");
-            recyclerView.setAdapter(new PollsListAdapter(new PollsService().getAvailablePollsList(), mListener));
+            new PollsService().getAvailablePollsList(recyclerView, mListener);
         }
         return view;
     }
