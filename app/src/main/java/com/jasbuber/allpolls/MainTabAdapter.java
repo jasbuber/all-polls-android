@@ -19,7 +19,7 @@ public class MainTabAdapter extends FragmentPagerAdapter {
         super(fm);
         this.context = context;
 
-        tabTitles = new String[] { context.getString(R.string.my_polls),
+        tabTitles = new String[]{context.getString(R.string.my_polls),
                 context.getString(R.string.find_polls)};
 
     }
@@ -32,7 +32,7 @@ public class MainTabAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        switch(position){
+        switch (position) {
             case 0:
                 return new MyPollsFragment();
             case 1:

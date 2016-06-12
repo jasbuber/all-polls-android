@@ -1,6 +1,5 @@
 package com.jasbuber.allpolls;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.jasbuber.allpolls.models.Poll;
+import com.jasbuber.allpolls.services.ChartDisplayService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MyPollsAdapter extends RecyclerView.Adapter<MyPollsAdapter.ViewHolder> {
@@ -40,7 +35,7 @@ public class MyPollsAdapter extends RecyclerView.Adapter<MyPollsAdapter.ViewHold
 
         holder.poll = polls.get(position);
         holder.mIdView.setText(polls.get(position).getTopic());
-        holder.mChart.setData(generatePieData());
+        holder.mChart.setData(new ChartDisplayService().generatePieData());
         holder.mChart.setDrawHoleEnabled(false);
         holder.mChart.getLegend().setEnabled(false);
         holder.mChart.setDescription("");
@@ -57,34 +52,6 @@ public class MyPollsAdapter extends RecyclerView.Adapter<MyPollsAdapter.ViewHold
                 }
             }
         });
-    }
-
-    protected PieData generatePieData() {
-
-        int count = 4;
-
-        ArrayList<Entry> entries1 = new ArrayList<Entry>();
-        ArrayList<String> xVals = new ArrayList<String>();
-
-        /*
-        xVals.add("Quarter 1");
-        xVals.add("Quarter 2");
-        xVals.add("Quarter 3");
-        xVals.add("Quarter 4");*/
-
-        for(int i = 0; i < count; i++) {
-            xVals.add(String.valueOf(i+1));
-
-            entries1.add(new Entry((float) (Math.random() * 60) + 40, i));
-        }
-
-        PieDataSet ds1 = new PieDataSet(entries1, "Quarterly Revenues 2015");
-        ds1.setColors(ColorTemplate.VORDIPLOM_COLORS);
-        ds1.setSliceSpace(2f);
-        ds1.setValueTextColor(Color.WHITE);
-        ds1.setValueTextSize(12f);
-
-        return new PieData(xVals, ds1);
     }
 
     @Override

@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements OnListFragmentInt
     @Override
     public void onListFragmentInteraction(Poll poll) {
         Intent intent = new Intent(this, PollActivity.class);
+
+        intent.putExtra("poll", poll);
         startActivity(intent);
     }
 }
