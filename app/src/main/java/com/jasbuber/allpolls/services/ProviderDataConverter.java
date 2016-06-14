@@ -20,7 +20,11 @@ public class ProviderDataConverter {
     public Poll fillPollWithProviderData(Poll poll, HashMap<String, JsonObject> data) {
 
         for (PartialPoll partial : poll.getPartialPolls()) {
-            fetchPartialPollData(partial, data.get(partial.getPollster()), poll.getTopic());
+            if(data.get(partial.getPollster()) != null) {
+                fetchPartialPollData(partial, data.get(partial.getPollster()), poll.getTopic());
+            }else{
+                poll.getPartialPolls().remove(partial);
+            }
         }
 
         new PollCalculator().calculateResults(poll);
