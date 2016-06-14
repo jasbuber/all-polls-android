@@ -4,5 +4,8 @@
 
     <string name="my_polls">My Polls</string>
     <string name="find_polls">Find Polls</string>
-    <string name="title_activity_poll">PollActivity</string>
+    <string name="title_activity_poll">Poll data</string>
+
+    <string name="poles_used">Polls Used:</string>
+    <string name="provided_by">Provided By:</string>
 </resources>
