@@ -7,7 +7,10 @@ import com.jasbuber.allpolls.models.PartialPoll;
 import com.jasbuber.allpolls.models.PartialPollChoice;
 import com.jasbuber.allpolls.models.Poll;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Created by Jasbuber on 11/06/2016.
@@ -27,6 +30,12 @@ public class ProviderDataConverter {
 
     private PartialPoll fetchPartialPollData(PartialPoll partial, JsonObject data, String topic) {
 
+        try {
+            partial.setLastUpdated(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US)
+                    .parse(data.get("last_updated").getAsString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         JsonArray questions = data.get("questions").getAsJsonArray();
 
         for (int i = 0; i < questions.size(); i++) {

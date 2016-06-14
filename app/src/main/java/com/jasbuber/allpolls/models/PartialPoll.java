@@ -1,6 +1,7 @@
 package com.jasbuber.allpolls.models;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +20,8 @@ public class PartialPoll implements Serializable {
     private String pollster;
 
     private Set<String> universalValues = new HashSet<>();
+
+    Date lastUpdated;
 
     public PartialPoll() {
     }
@@ -41,5 +44,13 @@ public class PartialPoll implements Serializable {
 
     public Set<String> getUniversalValues() {
         return universalValues;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }
