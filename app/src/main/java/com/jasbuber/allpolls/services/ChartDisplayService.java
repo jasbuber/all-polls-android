@@ -8,8 +8,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Jasbuber on 11/06/2016.
@@ -30,7 +30,7 @@ public class ChartDisplayService {
         }
 
         PieDataSet ds1 = new PieDataSet(entries1, "Quarterly Revenues 2015");
-        ds1.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        ds1.setColors(ColorTemplate.PASTEL_COLORS);
         ds1.setSliceSpace(2f);
         ds1.setValueTextColor(Color.WHITE);
         ds1.setValueTextSize(12f);
@@ -38,7 +38,7 @@ public class ChartDisplayService {
         return new PieData(xVals, ds1);
     }
 
-    public PieData generatePieData(HashMap<String, Double> data) {
+    public PieData generatePieData(Map<String, Double> data) {
 
         List<String> labels = new ArrayList<>();
         labels.addAll(data.keySet());
@@ -52,8 +52,8 @@ public class ChartDisplayService {
             values.add(new Entry((float) (double) valueList.get(i), i));
         }
 
-        PieDataSet ds1 = new PieDataSet(values, "dfhjdfhfjdhfdfjdjfd");
-        ds1.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        PieDataSet ds1 = new PieDataSet(values, "");
+        ds1.setColors(ColorTemplate.PASTEL_COLORS);
         ds1.setSliceSpace(2f);
         ds1.setValueTextColor(Color.WHITE);
         ds1.setValueTextSize(12f);
