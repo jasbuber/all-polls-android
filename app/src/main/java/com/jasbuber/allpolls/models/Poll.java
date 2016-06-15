@@ -16,6 +16,8 @@ public class Poll implements Serializable {
 
     String topic;
 
+    String remoteId;
+
     Date expirationDate;
 
     public Poll() {
@@ -49,6 +51,10 @@ public class Poll implements Serializable {
 
     public void setResults(HashMap<String, Double> results) {
         this.results = results;
+    }
+
+    public String getRemoteId() {
+        return remoteId;
     }
 }
 

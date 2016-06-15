@@ -39,7 +39,7 @@ public class ProviderService {
 
         ProviderServerService service = retrofit.create(ProviderServerService.class);
 
-        Call<JsonArray> call = service.getPartialPolls(poll.getTopic());
+        Call<JsonArray> call = service.getPartialPolls(poll.getRemoteId());
 
         call.enqueue(new Callback<JsonArray>() {
             @Override

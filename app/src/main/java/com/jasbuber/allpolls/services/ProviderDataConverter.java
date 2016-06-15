@@ -21,7 +21,7 @@ public class ProviderDataConverter {
 
         for (PartialPoll partial : poll.getPartialPolls()) {
             if(data.get(partial.getPollster()) != null) {
-                fetchPartialPollData(partial, data.get(partial.getPollster()), poll.getTopic());
+                fetchPartialPollData(partial, data.get(partial.getPollster()), poll.getRemoteId());
             }else{
                 poll.getPartialPolls().remove(partial);
             }
