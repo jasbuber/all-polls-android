@@ -1,9 +1,9 @@
 package com.jasbuber.allpolls;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,6 +15,8 @@ import com.jasbuber.allpolls.services.ChartDisplayService;
 import com.jasbuber.allpolls.services.PollCalculator;
 import com.jasbuber.allpolls.services.ProviderService;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Map;
 
 public class PollActivity extends AppCompatActivity {
@@ -26,6 +28,8 @@ public class PollActivity extends AppCompatActivity {
     boolean isPartialView = false;
 
     Map<String, Double> partialResults;
+
+    Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +45,10 @@ public class PollActivity extends AppCompatActivity {
     public void displayPieChart(Poll poll) {
         this.poll = poll;
 
+        ChartDisplayService service = new ChartDisplayService();
         pieChart = (PieChart) findViewById(R.id.poll_pie_chart);
-        pieChart.setData(new ChartDisplayService().generatePieData(poll.getResults()));
-        pieChart.setDrawHoleEnabled(false);
-        pieChart.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
-        pieChart.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
-        pieChart.setDescription("");
-        pieChart.setRotationEnabled(false);
-        pieChart.setTouchEnabled(false);
+        pieChart.setData(service.generatePieData(poll.getResults()));
+        service.initializeChart(pieChart);
         pieChart.notifyDataSetChanged();
         pieChart.invalidate();
 
@@ -66,30 +66,27 @@ public class PollActivity extends AppCompatActivity {
 
     public void displayPartialPoll(PartialPoll partial) {
 
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_partial_poll);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        PieChart partialChart = (PieChart) dialog.findViewById(R.id.partial_pie_chart);
+
+        ((TextView) dialog.findViewById(R.id.partial_poll_title)).setText(partial.getPollster());
+        ((TextView) dialog.findViewById(R.id.dialog_last_updated))
+                .setText( new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(partial.getLastUpdated()));
+
         isPartialView = true;
+
         partialResults = new PollCalculator().calculatePartialResults(partial);
-        pieChart.setData(new ChartDisplayService().generatePieData(partialResults));
-        pieChart.notifyDataSetChanged();
-        pieChart.invalidate();
-        findViewById(R.id.poll_partial_polls).setVisibility(View.GONE);
-        findViewById(R.id.partial_polls_title).setVisibility(View.GONE);
 
-        ((TextView) findViewById(R.id.poll_title)).setText(poll.getTopic() + " - " + partial.getPollster());
-    }
+        ChartDisplayService service = new ChartDisplayService();
+        partialChart.setData(service.generatePieData(partialResults));
+        service.initializeChart(partialChart);
+        partialChart.notifyDataSetChanged();
+        partialChart.invalidate();
 
-    @Override
-    public void onBackPressed() {
-        if (isPartialView) {
-            pieChart.setData(new ChartDisplayService().generatePieData(poll.getResults()));
-            pieChart.notifyDataSetChanged();
-            pieChart.invalidate();
-            findViewById(R.id.poll_partial_polls).setVisibility(View.VISIBLE);
-            findViewById(R.id.partial_polls_title).setVisibility(View.VISIBLE);
-            ((TextView) findViewById(R.id.poll_title)).setText(poll.getTopic());
-            isPartialView = false;
-        } else {
-            super.onBackPressed();
-        }
+        dialog.show();
 
     }
 

@@ -2,6 +2,8 @@ package com.jasbuber.allpolls.services;
 
 import android.graphics.Color;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -59,5 +61,14 @@ public class ChartDisplayService {
         ds1.setValueTextSize(12f);
 
         return new PieData(labels, ds1);
+    }
+
+    public void initializeChart(PieChart chart){
+        chart.setDrawHoleEnabled(false);
+        chart.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        chart.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
+        chart.setDescription("");
+        chart.setRotationEnabled(false);
+        chart.setTouchEnabled(false);
     }
 }
