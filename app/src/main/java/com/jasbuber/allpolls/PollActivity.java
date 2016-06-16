@@ -16,6 +16,8 @@ import com.jasbuber.allpolls.services.PollCalculator;
 import com.jasbuber.allpolls.services.ProviderService;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -55,6 +57,12 @@ public class PollActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.poll_title)).setText(poll.getTopic());
 
         LinearLayout partialLayout = (LinearLayout) findViewById(R.id.poll_partial_polls);
+
+        Collections.sort(poll.getPartialPolls(), new Comparator<PartialPoll>() {
+            public int compare(PartialPoll p1, PartialPoll p2) {
+                return p2.getLastUpdated().compareTo(p1.getLastUpdated());
+            }
+        });
 
         PartialPollsAdapter adapter = new PartialPollsAdapter(this, poll.getPartialPolls());
 
