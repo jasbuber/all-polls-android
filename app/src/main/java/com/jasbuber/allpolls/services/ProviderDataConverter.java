@@ -9,7 +9,9 @@ import com.jasbuber.allpolls.models.Poll;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -19,13 +21,17 @@ public class ProviderDataConverter {
 
     public Poll fillPollWithProviderData(Poll poll, HashMap<String, JsonObject> data) {
 
+        List<PartialPoll> toDelete = new ArrayList<>();
+
         for (PartialPoll partial : poll.getPartialPolls()) {
             if(data.get(partial.getPollster()) != null) {
                 fetchPartialPollData(partial, data.get(partial.getPollster()), poll.getRemoteId());
             }else{
-                poll.getPartialPolls().remove(partial);
+                toDelete.add(partial);
             }
         }
+
+        poll.getPartialPolls().removeAll(toDelete);
 
         new PollCalculator().calculateResults(poll);
         return poll;
