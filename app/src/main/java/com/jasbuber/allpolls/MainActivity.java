@@ -2,20 +2,17 @@ package com.jasbuber.allpolls;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.jasbuber.allpolls.models.Poll;
+import com.jasbuber.allpolls.models.orm.PollORM;
 
-public class MainActivity extends AppCompatActivity implements OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements OnListFragmentInteractionListener, OnListMyPollsInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +21,6 @@ public class MainActivity extends AppCompatActivity implements OnListFragmentInt
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        /*
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), RestaurantActivity.class);
-                startActivity(intent);
-            }
-        });*/
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.client_toolbar);
         ViewPager viewPager = (ViewPager) findViewById(R.id.client_view_pager);
@@ -70,6 +57,13 @@ public class MainActivity extends AppCompatActivity implements OnListFragmentInt
         Intent intent = new Intent(this, PollActivity.class);
 
         intent.putExtra("poll", poll);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onListFragmentInteraction(PollORM poll) {
+        Intent intent = new Intent(this, PollActivity.class);
+        intent.putExtra("pollId", poll.getId());
         startActivity(intent);
     }
 }

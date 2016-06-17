@@ -7,17 +7,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.jasbuber.allpolls.models.Poll;
+import com.jasbuber.allpolls.models.orm.PollORM;
 import com.jasbuber.allpolls.services.ChartDisplayService;
 
 import java.util.List;
 
 public class MyPollsAdapter extends RecyclerView.Adapter<MyPollsAdapter.ViewHolder> {
 
-    private final List<Poll> polls;
-    private final OnListFragmentInteractionListener mListener;
+    private final List<PollORM> polls;
+    private final OnListMyPollsInteractionListener mListener;
 
-    public MyPollsAdapter(List<Poll> polls, OnListFragmentInteractionListener listener) {
+    public MyPollsAdapter(List<PollORM> polls, OnListMyPollsInteractionListener listener) {
         this.polls = polls;
         mListener = listener;
     }
@@ -64,7 +64,7 @@ public class MyPollsAdapter extends RecyclerView.Adapter<MyPollsAdapter.ViewHold
         public final View mView;
         public final TextView mIdView;
         public final PieChart mChart;
-        public Poll poll;
+        public PollORM poll;
 
         public ViewHolder(View view) {
             super(view);

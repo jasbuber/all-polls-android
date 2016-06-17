@@ -2,16 +2,20 @@ package com.jasbuber.allpolls;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.jasbuber.allpolls.models.PartialPoll;
 import com.jasbuber.allpolls.models.Poll;
+import com.jasbuber.allpolls.repositories.PollRepository;
 import com.jasbuber.allpolls.services.ChartDisplayService;
+import com.jasbuber.allpolls.services.InternalPollService;
 import com.jasbuber.allpolls.services.PollCalculator;
 import com.jasbuber.allpolls.services.ProviderService;
 
@@ -40,7 +44,26 @@ public class PollActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        new ProviderService().getPartialPollsFromProvider(this, (Poll) getIntent().getSerializableExtra("poll"));
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_to_my_polls);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new InternalPollService(new PollRepository()).createOrUpdatePoll(poll);
+                Toast.makeText(PollActivity.this, PollActivity.this.getString(R.string.poll_added), Toast.LENGTH_SHORT).show();
+                fab.setVisibility(View.GONE);
+            }
+        });
+
+        InternalPollService service = new InternalPollService(new PollRepository());
+        if (getIntent().getSerializableExtra("poll") != null) {
+            new ProviderService().getPartialPollsFromProvider(this, (Poll) getIntent().getSerializableExtra("poll"));
+        } else {
+            long id = getIntent().getLongExtra("pollId", -1);
+            Poll poll = service.getPoll(id);
+            new PollCalculator().calculateResults(poll);
+            displayPieChart(poll);
+        }
 
     }
 
@@ -82,7 +105,7 @@ public class PollActivity extends AppCompatActivity {
 
         ((TextView) dialog.findViewById(R.id.partial_poll_title)).setText(partial.getPollster());
         ((TextView) dialog.findViewById(R.id.dialog_last_updated))
-                .setText( new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(partial.getLastUpdated()));
+                .setText(new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(partial.getLastUpdated()));
 
         isPartialView = true;
 

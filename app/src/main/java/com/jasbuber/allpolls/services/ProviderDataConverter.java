@@ -24,9 +24,9 @@ public class ProviderDataConverter {
         List<PartialPoll> toDelete = new ArrayList<>();
 
         for (PartialPoll partial : poll.getPartialPolls()) {
-            if(data.get(partial.getPollster()) != null) {
+            if (data.get(partial.getPollster()) != null) {
                 fetchPartialPollData(partial, data.get(partial.getPollster()), poll.getRemoteId());
-            }else{
+            } else {
                 toDelete.add(partial);
             }
         }
@@ -57,15 +57,25 @@ public class ProviderDataConverter {
                 JsonArray choices = question.get("subpopulations").getAsJsonArray()
                         .get(0).getAsJsonObject().get("responses").getAsJsonArray();
 
+                List<PartialPollChoice> pChoices = new ArrayList<>();
+                pChoices.addAll(partial.getPollerChoices());
+
                 for (JsonElement choiceElem : choices) {
                     JsonObject choice = choiceElem.getAsJsonObject();
                     String partialChoice = choice.get("choice").getAsString();
 
-                    PartialPollChoice partialObj = partial.getPollerChoices().get(partialChoice);
+                    PartialPollChoice partialObj = null;
+
+                    for (PartialPollChoice pChoice : pChoices) {
+                        if (pChoice.getName().equals(partialChoice)) {
+                            partialObj = pChoice;
+                        }
+                    }
 
                     if (partialObj != null) {
                         partialObj.setValue(choice.get("value").getAsDouble());
                         partial.getUniversalValues().add(partialObj.getUniversalValue());
+                        pChoices.remove(partialObj);
                     }
                 }
             }

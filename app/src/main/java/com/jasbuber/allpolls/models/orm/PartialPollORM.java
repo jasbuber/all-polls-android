@@ -1,44 +1,50 @@
-package com.jasbuber.allpolls.models;
+package com.jasbuber.allpolls.models.orm;
 
-import com.jasbuber.allpolls.models.orm.PartialPollChoiceORM;
-import com.jasbuber.allpolls.models.orm.PartialPollORM;
+import com.jasbuber.allpolls.models.PartialPoll;
+import com.jasbuber.allpolls.models.PartialPollChoice;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by Jasbuber on 09/06/2016.
- */
-public class PartialPoll implements Serializable {
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
+/**
+ * Created by Jasbuber on 16/06/2016.
+ */
+public class PartialPollORM extends RealmObject {
+
+    @PrimaryKey
     private Long id;
 
-    private List<PartialPollChoice> pollerChoices;
+    private RealmList<PartialPollChoiceORM> pollerChoices = new RealmList<>();
 
     private String provider;
 
+    @Required
     private String pollster;
 
+    @Ignore
     private Set<String> universalValues = new HashSet<>();
 
     Date lastUpdated;
 
-    public PartialPoll() {
+    public PartialPollORM() {
     }
 
-    public PartialPoll(PartialPollORM poll) {
+    public PartialPollORM(PartialPoll poll) {
         this.id = poll.getId();
         this.provider = poll.getProvider();
         this.pollster = poll.getPollster();
         this.lastUpdated = poll.getLastUpdated();
 
-        pollerChoices = new ArrayList<>();
-        for (PartialPollChoiceORM choice : poll.getPollerChoices()) {
-            this.pollerChoices.add(new PartialPollChoice(choice));
+        for (PartialPollChoice choice : poll.getPollerChoices()) {
+            this.pollerChoices.add(new PartialPollChoiceORM(choice));
         }
     }
 
@@ -46,7 +52,7 @@ public class PartialPoll implements Serializable {
         return id;
     }
 
-    public List<PartialPollChoice> getPollerChoices() {
+    public List<PartialPollChoiceORM> getPollerChoices() {
         return pollerChoices;
     }
 
@@ -75,7 +81,7 @@ public class PartialPoll implements Serializable {
     }
 
     protected void fillUniversalValues() {
-        for (PartialPollChoice choice : pollerChoices) {
+        for (PartialPollChoiceORM choice : pollerChoices) {
             universalValues.add(choice.getUniversalValue());
         }
     }

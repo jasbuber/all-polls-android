@@ -8,4 +8,6 @@
 
     <string name="poles_used">Polls Used:</string>
     <string name="provided_by">Provided By:</string>
+
+    <string name="poll_added">Poll added to favorites</string>
 </resources>

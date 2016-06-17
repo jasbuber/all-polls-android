@@ -6,7 +6,6 @@ import com.jasbuber.allpolls.OnListFragmentInteractionListener;
 import com.jasbuber.allpolls.PollsListAdapter;
 import com.jasbuber.allpolls.models.Poll;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -51,14 +50,4 @@ public class PollsService {
         });
     }
 
-    public List<Poll> getMyPollsList() {
-        List<Poll> polls = new ArrayList<>();
-        polls.add(new Poll("topic1"));
-        polls.add(new Poll("topic2"));
-        polls.add(new Poll("topic3"));
-        polls.add(new Poll("topic4"));
-        polls.add(new Poll("topic5"));
-
-        return polls;
-    }
 }

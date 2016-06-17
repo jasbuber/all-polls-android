@@ -36,7 +36,7 @@ public class PollCalculator {
         }
 
         for (PartialPoll partial : partialPolls) {
-            Collection<PartialPollChoice> choices = partial.getPollerChoices().values();
+            Collection<PartialPollChoice> choices = partial.getPollerChoices();
             Map<String, Double> partChoices = new HashMap<>();
 
             Double total = 0.0;
@@ -99,21 +99,21 @@ public class PollCalculator {
         return result;
     }
 
-    public Map<String, Double> calculatePartialResults(PartialPoll poll){
+    public Map<String, Double> calculatePartialResults(PartialPoll poll) {
 
-        Collection<PartialPollChoice> choices = poll.getPollerChoices().values();
+        Collection<PartialPollChoice> choices = poll.getPollerChoices();
         Map<String, Double> partChoices = new HashMap<>();
 
         Double total = 0.0;
         boolean isRecalculate = false;
 
         for (PartialPollChoice choice : choices) {
-                partChoices.put(choice.getUniversalValue(), choice.getValue());
-                total += choice.getValue();
+            partChoices.put(choice.getUniversalValue(), choice.getValue());
+            total += choice.getValue();
         }
         double difference = 100.0 - total;
 
-        if(Math.abs(difference) > 0.1){
+        if (Math.abs(difference) > 0.1) {
             isRecalculate = true;
             partChoices.put(PartialPollChoice.UNDECIDED, difference);
         }

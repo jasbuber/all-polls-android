@@ -1,53 +1,58 @@
-package com.jasbuber.allpolls.models;
+package com.jasbuber.allpolls.models.orm;
 
-import com.jasbuber.allpolls.models.orm.PartialPollORM;
-import com.jasbuber.allpolls.models.orm.PollORM;
+import com.jasbuber.allpolls.models.PartialPoll;
+import com.jasbuber.allpolls.models.Poll;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by Jasbuber on 07/06/2016.
- */
-public class Poll implements Serializable {
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
+/**
+ * Created by Jasbuber on 16/06/2016.
+ */
+public class PollORM extends RealmObject {
+
+    @PrimaryKey
     private Long id;
 
-    List<PartialPoll> partialPolls;
+    RealmList<PartialPollORM> partialPolls = new RealmList<>();
 
+    @Required
     String topic;
 
     String remoteId;
 
     Date expirationDate;
 
-    public Poll() {
+    public PollORM() {
     }
 
-    public Poll(PollORM poll) {
+    public PollORM(String topic) {
+        this.topic = topic;
+    }
+
+    public PollORM(Poll poll) {
         this.id = poll.getId();
         this.topic = poll.getTopic();
         this.remoteId = poll.getRemoteId();
         this.expirationDate = poll.getExpirationDate();
 
-        partialPolls = new ArrayList<>();
-        for (PartialPollORM partial : poll.getPartialPolls()) {
-            this.partialPolls.add(new PartialPoll(partial));
+        for (PartialPoll partial : poll.getPartialPolls()) {
+            this.partialPolls.add(new PartialPollORM(partial));
         }
-    }
-
-    public Poll(String topic) {
-        this.topic = topic;
     }
 
     public Long getId() {
         return id;
     }
 
-    public List<PartialPoll> getPartialPolls() {
+    public List<PartialPollORM> getPartialPolls() {
         return partialPolls;
     }
 
@@ -59,6 +64,7 @@ public class Poll implements Serializable {
         return expirationDate;
     }
 
+    @Ignore
     public HashMap<String, Double> results;
 
     public HashMap<String, Double> getResults() {
@@ -73,4 +79,3 @@ public class Poll implements Serializable {
         return remoteId;
     }
 }
-

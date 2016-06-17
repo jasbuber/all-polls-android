@@ -9,12 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jasbuber.allpolls.services.PollsService;
+import com.jasbuber.allpolls.repositories.PollRepository;
+import com.jasbuber.allpolls.services.InternalPollService;
 
 public class MyPollsFragment extends Fragment {
 
     private int columnCount = 2;
-    private OnListFragmentInteractionListener mListener;
+    private OnListMyPollsInteractionListener mListener;
 
     public MyPollsFragment() {
     }
@@ -40,7 +41,7 @@ public class MyPollsFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) view;
 
             recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
-            recyclerView.setAdapter(new MyPollsAdapter(new PollsService().getMyPollsList(), mListener));
+            recyclerView.setAdapter(new MyPollsAdapter(new InternalPollService(new PollRepository()).getMyPolls(), mListener));
         }
         return view;
     }
@@ -49,7 +50,7 @@ public class MyPollsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (OnListFragmentInteractionListener) getActivity();
+        mListener = (OnListMyPollsInteractionListener) getActivity();
     }
 
     @Override
