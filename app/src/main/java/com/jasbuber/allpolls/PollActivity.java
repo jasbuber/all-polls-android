@@ -37,6 +37,8 @@ public class PollActivity extends AppCompatActivity {
 
     Dialog dialog;
 
+    boolean isFavorite = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,17 +51,36 @@ public class PollActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new InternalPollService(new PollRepository()).createOrUpdatePoll(poll);
-                Toast.makeText(PollActivity.this, PollActivity.this.getString(R.string.poll_added), Toast.LENGTH_SHORT).show();
-                fab.setVisibility(View.GONE);
+                if(isFavorite) {
+                    new InternalPollService(new PollRepository()).deletePoll(poll);
+                    fab.setImageResource(R.mipmap.star_inactive);
+                    Toast.makeText(PollActivity.this, PollActivity.this.getString(R.string.poll_deleted), Toast.LENGTH_SHORT).show();
+                    isFavorite = false;
+
+                }else{
+                    new InternalPollService(new PollRepository()).createOrUpdatePoll(poll);
+                    fab.setImageResource(R.mipmap.star_active);
+                    Toast.makeText(PollActivity.this, PollActivity.this.getString(R.string.poll_added), Toast.LENGTH_SHORT).show();
+                    isFavorite = true;
+                }
             }
         });
 
         InternalPollService service = new InternalPollService(new PollRepository());
         if (getIntent().getSerializableExtra("poll") != null) {
-            new ProviderService().getPartialPollsFromProvider(this, (Poll) getIntent().getSerializableExtra("poll"));
+            Poll poll = (Poll) getIntent().getSerializableExtra("poll");
+            boolean pollExists = new InternalPollService(new PollRepository()).pollExists(poll.getId());
+
+            new ProviderService().getPartialPollsFromProvider(this, poll);
+
+            if(pollExists) {
+                isFavorite = true;
+                fab.setImageResource(R.mipmap.star_active);
+            }
         } else {
             long id = getIntent().getLongExtra("pollId", -1);
+            isFavorite = true;
+            fab.setImageResource(R.mipmap.star_active);
             Poll poll = service.getPoll(id);
             new PollCalculator().calculateResults(poll);
             displayPieChart(poll);

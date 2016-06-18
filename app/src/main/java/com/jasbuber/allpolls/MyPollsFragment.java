@@ -10,12 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jasbuber.allpolls.repositories.PollRepository;
+import com.jasbuber.allpolls.services.ChartDisplayService;
 import com.jasbuber.allpolls.services.InternalPollService;
+import com.jasbuber.allpolls.services.PollCalculator;
 
 public class MyPollsFragment extends Fragment {
 
     private int columnCount = 2;
     private OnListMyPollsInteractionListener mListener;
+
+    private RecyclerView recyclerView;
 
     public MyPollsFragment() {
     }
@@ -38,10 +42,8 @@ public class MyPollsFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-
-            recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
-            recyclerView.setAdapter(new MyPollsAdapter(new InternalPollService(new PollRepository()).getMyPolls(), mListener));
+            this.recyclerView = (RecyclerView) view;
+            this.recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
         }
         return view;
     }
@@ -57,5 +59,14 @@ public class MyPollsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        this.recyclerView.setAdapter(new MyPollsAdapter(
+                new InternalPollService(new PollRepository()).getMyPolls(), mListener,
+                new PollCalculator(), new ChartDisplayService()));
     }
 }

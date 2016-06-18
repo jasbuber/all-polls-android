@@ -18,28 +18,6 @@ import java.util.Map;
  */
 public class ChartDisplayService {
 
-    public PieData generatePieData() {
-
-        int count = 4;
-
-        ArrayList<Entry> entries1 = new ArrayList<Entry>();
-        ArrayList<String> xVals = new ArrayList<String>();
-
-        for (int i = 0; i < count; i++) {
-            xVals.add(String.valueOf(i + 1));
-
-            entries1.add(new Entry((float) (Math.random() * 60) + 40, i));
-        }
-
-        PieDataSet ds1 = new PieDataSet(entries1, "Quarterly Revenues 2015");
-        ds1.setColors(ColorTemplate.PASTEL_COLORS);
-        ds1.setSliceSpace(2f);
-        ds1.setValueTextColor(Color.WHITE);
-        ds1.setValueTextSize(12f);
-
-        return new PieData(xVals, ds1);
-    }
-
     public PieData generatePieData(Map<String, Double> data) {
 
         List<String> labels = new ArrayList<>();

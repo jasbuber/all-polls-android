@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.jasbuber.allpolls.models.Poll;
 import com.jasbuber.allpolls.models.orm.PollORM;
 import com.jasbuber.allpolls.services.ChartDisplayService;
+import com.jasbuber.allpolls.services.PollCalculator;
 
 import java.util.List;
 
@@ -17,9 +19,15 @@ public class MyPollsAdapter extends RecyclerView.Adapter<MyPollsAdapter.ViewHold
     private final List<PollORM> polls;
     private final OnListMyPollsInteractionListener mListener;
 
-    public MyPollsAdapter(List<PollORM> polls, OnListMyPollsInteractionListener listener) {
+    private PollCalculator calculator;
+    private ChartDisplayService service;
+
+    public MyPollsAdapter(List<PollORM> polls, OnListMyPollsInteractionListener listener,
+                          PollCalculator calculator, ChartDisplayService service) {
         this.polls = polls;
         mListener = listener;
+        this.calculator = calculator;
+        this.service = service;
     }
 
     @Override
@@ -32,15 +40,15 @@ public class MyPollsAdapter extends RecyclerView.Adapter<MyPollsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-
         holder.poll = polls.get(position);
+        Poll poll = calculator.calculateResults(new Poll(holder.poll));
+        holder.poll.setResults(poll.getResults());
+
         holder.mIdView.setText(polls.get(position).getTopic());
-        holder.mChart.setData(new ChartDisplayService().generatePieData());
-        holder.mChart.setDrawHoleEnabled(false);
+        service.initializeChart(holder.mChart);
+        holder.mChart.setData(service.generatePieData(holder.poll.getResults()));
         holder.mChart.getLegend().setEnabled(false);
-        holder.mChart.setDescription("");
-        holder.mChart.setRotationEnabled(false);
-        holder.mChart.setTouchEnabled(false);
+        holder.mChart.setDrawSliceText(false);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

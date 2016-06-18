@@ -1,7 +1,5 @@
 package com.jasbuber.allpolls.services;
 
-import android.util.Log;
-
 import com.jasbuber.allpolls.models.Poll;
 import com.jasbuber.allpolls.models.orm.PollORM;
 import com.jasbuber.allpolls.repositories.PollRepository;
@@ -20,7 +18,6 @@ public class InternalPollService {
     }
 
     public List<PollORM> getMyPolls() {
-        Log.d("saved polls", repository.getMyPolls().toString());
         return repository.getMyPolls();
     }
 
@@ -35,6 +32,9 @@ public class InternalPollService {
 
     public boolean pollExists(long id) {
         return repository.pollExists(id);
+    }
+    public void deletePoll(Poll poll) {
+        repository.deletePoll(poll);
     }
 
 }
