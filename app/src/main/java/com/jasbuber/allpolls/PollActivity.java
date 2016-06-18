@@ -29,11 +29,11 @@ public class PollActivity extends AppCompatActivity {
 
     Poll poll;
 
+    PartialPoll selectedPartial;
+
     PieChart pieChart;
 
     boolean isPartialView = false;
-
-    Map<String, Double> partialResults;
 
     Dialog dialog;
 
@@ -48,16 +48,22 @@ public class PollActivity extends AppCompatActivity {
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_to_my_polls);
 
+        if (savedInstanceState != null) {
+            restoreInstance(savedInstanceState, fab);
+        } else {
+            initializeNewInstance(fab);
+        }
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isFavorite) {
+                if (isFavorite) {
                     new InternalPollService(new PollRepository()).deletePoll(poll);
                     fab.setImageResource(R.mipmap.star_inactive);
                     Toast.makeText(PollActivity.this, PollActivity.this.getString(R.string.poll_deleted), Toast.LENGTH_SHORT).show();
                     isFavorite = false;
 
-                }else{
+                } else {
                     new InternalPollService(new PollRepository()).createOrUpdatePoll(poll);
                     fab.setImageResource(R.mipmap.star_active);
                     Toast.makeText(PollActivity.this, PollActivity.this.getString(R.string.poll_added), Toast.LENGTH_SHORT).show();
@@ -65,26 +71,6 @@ public class PollActivity extends AppCompatActivity {
                 }
             }
         });
-
-        InternalPollService service = new InternalPollService(new PollRepository());
-        if (getIntent().getSerializableExtra("poll") != null) {
-            Poll poll = (Poll) getIntent().getSerializableExtra("poll");
-            boolean pollExists = new InternalPollService(new PollRepository()).pollExists(poll.getId());
-
-            new ProviderService().getPartialPollsFromProvider(this, poll);
-
-            if(pollExists) {
-                isFavorite = true;
-                fab.setImageResource(R.mipmap.star_active);
-            }
-        } else {
-            long id = getIntent().getLongExtra("pollId", -1);
-            isFavorite = true;
-            fab.setImageResource(R.mipmap.star_active);
-            Poll poll = service.getPoll(id);
-            new PollCalculator().calculateResults(poll);
-            displayPieChart(poll);
-        }
 
     }
 
@@ -118,6 +104,7 @@ public class PollActivity extends AppCompatActivity {
 
     public void displayPartialPoll(PartialPoll partial) {
 
+        selectedPartial = partial;
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_partial_poll);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -130,7 +117,7 @@ public class PollActivity extends AppCompatActivity {
 
         isPartialView = true;
 
-        partialResults = new PollCalculator().calculatePartialResults(partial);
+        Map<String, Double> partialResults = new PollCalculator().calculatePartialResults(partial);
 
         ChartDisplayService service = new ChartDisplayService();
         partialChart.setData(service.generatePieData(partialResults));
@@ -139,7 +126,66 @@ public class PollActivity extends AppCompatActivity {
         partialChart.invalidate();
 
         dialog.show();
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean("isPartialView", isPartialView);
+        savedInstanceState.putBoolean("isFavorite", isFavorite);
+        savedInstanceState.putSerializable("poll", poll);
+        if (isPartialView) {
+            savedInstanceState.putSerializable("selectedPartial", selectedPartial);
+        }
+    }
+
+    private void initializeNewInstance(FloatingActionButton fab) {
+        InternalPollService service = new InternalPollService(new PollRepository());
+
+        if (getIntent().getSerializableExtra("poll") != null) {
+            Poll poll = (Poll) getIntent().getSerializableExtra("poll");
+            boolean pollExists = service.pollExists(poll.getId());
+
+            new ProviderService().getPartialPollsFromProvider(this, poll);
+
+            if (pollExists) {
+                isFavorite = true;
+                fab.setImageResource(R.mipmap.star_active);
+            }
+        } else {
+            long id = getIntent().getLongExtra("pollId", -1);
+            isFavorite = true;
+            fab.setImageResource(R.mipmap.star_active);
+            Poll poll = service.getPoll(id);
+            new PollCalculator().calculateResults(poll);
+            displayPieChart(poll);
+        }
+    }
+
+    private void restoreInstance(Bundle savedInstance, FloatingActionButton fab) {
+        isFavorite = savedInstance.getBoolean("isFavorite");
+        isPartialView = savedInstance.getBoolean("isPartialView");
+        poll = (Poll) savedInstance.getSerializable("poll");
+
+        displayPieChart(poll);
+        if (isPartialView) {
+            selectedPartial = (PartialPoll) savedInstance.getSerializable("selectedPartial");
+            displayPartialPoll(selectedPartial);
+        }
+
+        if (isFavorite) {
+            fab.setImageResource(R.mipmap.star_active);
+        } else {
+            fab.setImageResource(R.mipmap.star_inactive);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (dialog != null) {
+            dialog.dismiss();
+        }
     }
 
 }

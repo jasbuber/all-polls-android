@@ -63,4 +63,8 @@ public class PollsListAdapter extends RecyclerView.Adapter<PollsListAdapter.View
             return super.toString() + " '" + mIdView.getText() + "'";
         }
     }
+
+    public List<Poll> getPolls() {
+        return polls;
+    }
 }

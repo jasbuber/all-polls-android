@@ -9,12 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jasbuber.allpolls.models.Poll;
 import com.jasbuber.allpolls.services.PollsService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PollsListFragment extends Fragment {
 
     private int columnsNr = 1;
     private OnListFragmentInteractionListener mListener;
+
+    RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -41,14 +47,24 @@ public class PollsListFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            this.recyclerView = (RecyclerView) view;
+            this.recyclerView.setLayoutManager(new GridLayoutManager(context, columnsNr));
 
-            recyclerView.setLayoutManager(new GridLayoutManager(context, columnsNr));
-            new PollsService().getAvailablePollsList(recyclerView, mListener);
+            if (savedInstanceState != null) {
+                List<Poll> polls = (List<Poll>) savedInstanceState.getSerializable("polls");
+                this.recyclerView.setAdapter(new PollsListAdapter(polls, mListener));
+            } else {
+                new PollsService().getAvailablePollsList(recyclerView, mListener);
+            }
         }
         return view;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        List<Poll> polls = ((PollsListAdapter) recyclerView.getAdapter()).getPolls();
+        savedInstanceState.putParcelableArrayList("polls", (ArrayList) polls);
+    }
 
     @Override
     public void onAttach(Context context) {
