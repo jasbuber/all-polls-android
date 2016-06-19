@@ -6,6 +6,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +22,7 @@ import com.jasbuber.allpolls.repositories.PollRepository;
 import com.jasbuber.allpolls.services.ChartDisplayService;
 import com.jasbuber.allpolls.services.InternalPollService;
 import com.jasbuber.allpolls.services.PollCalculator;
+import com.jasbuber.allpolls.services.PollsService;
 import com.jasbuber.allpolls.services.ProviderService;
 
 import java.text.SimpleDateFormat;
@@ -72,6 +78,15 @@ public class PollActivity extends AppCompatActivity {
             }
         });
 
+        final ImageButton refresh = (ImageButton) findViewById(R.id.refresh_poll);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshPoll(refresh);
+            }
+        });
+
+        refreshPoll(refresh);
     }
 
     public void displayPieChart(Poll poll) {
@@ -87,6 +102,7 @@ public class PollActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.poll_title)).setText(poll.getTopic());
 
         LinearLayout partialLayout = (LinearLayout) findViewById(R.id.poll_partial_polls);
+        partialLayout.removeAllViews();
 
         Collections.sort(poll.getPartialPolls(), new Comparator<PartialPoll>() {
             public int compare(PartialPoll p1, PartialPoll p2) {
@@ -99,6 +115,11 @@ public class PollActivity extends AppCompatActivity {
         for (int i = 0; i < adapter.getCount(); i++) {
             adapter.getView(i, null, null).getTag();
             partialLayout.addView(adapter.getView(i, null, null));
+        }
+
+        findViewById(R.id.refresh_poll).clearAnimation();
+        if (isFavorite) {
+            new InternalPollService(new PollRepository()).createOrUpdatePoll(poll);
         }
     }
 
@@ -186,6 +207,17 @@ public class PollActivity extends AppCompatActivity {
         if (dialog != null) {
             dialog.dismiss();
         }
+    }
+
+    private void refreshPoll(ImageView refresh) {
+        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(Animation.INFINITE);
+        anim.setDuration(700);
+
+        refresh.startAnimation(anim);
+        new PollsService().refreshPoll(PollActivity.this, poll.getId(), refresh);
     }
 
 }

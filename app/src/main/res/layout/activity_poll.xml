@@ -38,9 +38,20 @@
                 android:gravity="center_horizontal"
                 android:paddingBottom="20dp"
                 android:paddingLeft="15dp"
-                android:paddingRight="30dp"
+                android:paddingRight="40dp"
                 android:paddingTop="70dp"
                 android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/refresh_poll"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="15dip"
+                android:layout_marginTop="65dip"
+                android:background="@mipmap/refresh"
+                android:padding="20dp" />
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/poll_pie_chart"

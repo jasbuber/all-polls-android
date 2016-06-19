@@ -3,6 +3,7 @@ package com.jasbuber.allpolls;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -45,18 +46,27 @@ public class PollsListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_polls_list, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            this.recyclerView = (RecyclerView) view;
-            this.recyclerView.setLayoutManager(new GridLayoutManager(context, columnsNr));
+        Context context = view.getContext();
+        this.recyclerView = (RecyclerView) view.findViewById(R.id.available_polls_list);
+        this.recyclerView.setLayoutManager(new GridLayoutManager(context, columnsNr));
 
-            if (savedInstanceState != null) {
-                List<Poll> polls = (List<Poll>) savedInstanceState.getSerializable("polls");
-                this.recyclerView.setAdapter(new PollsListAdapter(polls, mListener));
-            } else {
-                new PollsService().getAvailablePollsList(recyclerView, mListener);
+        final SwipeRefreshLayout layout = (SwipeRefreshLayout) view.findViewById(R.id.polls_list_layout);
+        layout.setColorSchemeColors(R.color.colorPrimary);
+        layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new PollsService().getAvailablePollsList(recyclerView, mListener, layout);
             }
+        });
+
+        if (savedInstanceState != null) {
+            List<Poll> polls = (List<Poll>) savedInstanceState.getSerializable("polls");
+            this.recyclerView.setAdapter(new PollsListAdapter(polls, mListener));
+        } else {
+            layout.setRefreshing(true);
+            new PollsService().getAvailablePollsList(recyclerView, mListener, layout);
         }
+
         return view;
     }
 
