@@ -11,4 +11,6 @@
 
     <string name="poll_added">Poll added to favorites</string>
     <string name="poll_deleted">Poll removed from favorites</string>
+
+    <string name="no_my_polls">You have no polls in your favorites.</string>
 </resources>

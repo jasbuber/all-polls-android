@@ -9,10 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jasbuber.allpolls.models.Poll;
+import com.jasbuber.allpolls.models.orm.PollORM;
 import com.jasbuber.allpolls.repositories.PollRepository;
 import com.jasbuber.allpolls.services.ChartDisplayService;
 import com.jasbuber.allpolls.services.InternalPollService;
 import com.jasbuber.allpolls.services.PollCalculator;
+
+import java.util.List;
 
 public class MyPollsFragment extends Fragment {
 
@@ -40,11 +44,10 @@ public class MyPollsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_my_polls_list, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            this.recyclerView = (RecyclerView) view;
-            this.recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
-        }
+        Context context = view.getContext();
+        this.recyclerView = (RecyclerView) view.findViewById(R.id.my_polls_list);
+        this.recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
+
         return view;
     }
 
@@ -62,11 +65,19 @@ public class MyPollsFragment extends Fragment {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
-        this.recyclerView.setAdapter(new MyPollsAdapter(
-                new InternalPollService(new PollRepository()).getMyPolls(), mListener,
-                new PollCalculator(), new ChartDisplayService()));
+        List<PollORM> polls = new InternalPollService(new PollRepository()).getMyPolls();
+
+        if(polls.size() > 0) {
+            this.recyclerView.setAdapter(new MyPollsAdapter(polls, mListener, new PollCalculator(),
+                    new ChartDisplayService()));
+            this.recyclerView.setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.no_my_polls_label).setVisibility(View.GONE);
+        }else{
+            this.recyclerView.setVisibility(View.GONE);
+            getActivity().findViewById(R.id.no_my_polls_label).setVisibility(View.VISIBLE);
+        }
     }
 }
