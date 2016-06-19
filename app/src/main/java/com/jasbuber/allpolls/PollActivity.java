@@ -72,10 +72,14 @@ public class PollActivity extends AppCompatActivity {
                     isFavorite = false;
 
                 } else {
-                    new InternalPollService(new PollRepository()).createOrUpdatePoll(poll);
-                    fab.setImageResource(R.mipmap.star_active);
-                    Toast.makeText(PollActivity.this, PollActivity.this.getString(R.string.poll_added), Toast.LENGTH_SHORT).show();
-                    isFavorite = true;
+                    if (poll.getResults() == null || poll.getResults().isEmpty()) {
+                        Toast.makeText(PollActivity.this, PollActivity.this.getString(R.string.no_adding_to_favorites), Toast.LENGTH_SHORT).show();
+                    } else {
+                        new InternalPollService(new PollRepository()).createOrUpdatePoll(poll);
+                        fab.setImageResource(R.mipmap.star_active);
+                        Toast.makeText(PollActivity.this, PollActivity.this.getString(R.string.poll_added), Toast.LENGTH_SHORT).show();
+                        isFavorite = true;
+                    }
                 }
             }
         });
@@ -162,14 +166,23 @@ public class PollActivity extends AppCompatActivity {
         InternalPollService service = new InternalPollService(new PollRepository());
 
         if (getIntent().getSerializableExtra("poll") != null) {
-            Poll poll = (Poll) getIntent().getSerializableExtra("poll");
+            poll = (Poll) getIntent().getSerializableExtra("poll");
             boolean pollExists = service.pollExists(poll.getId());
-
-            new ProviderService().getPartialPollsFromProvider(this, poll);
 
             if (pollExists) {
                 isFavorite = true;
                 fab.setImageResource(R.mipmap.star_active);
+            }
+
+            if (PollsService.isNetworkAvailable(this)) {
+                new ProviderService().getPartialPollsFromProvider(this, poll);
+            } else {
+                if (pollExists) {
+                    Poll dbPoll = service.getPoll(poll.getId());
+                    new PollCalculator().calculateResults(dbPoll);
+                    displayPieChart(dbPoll);
+                }
+                Toast.makeText(this, this.getString(R.string.no_internet), Toast.LENGTH_LONG).show();
             }
         } else {
             long id = getIntent().getLongExtra("pollId", -1);
@@ -210,14 +223,19 @@ public class PollActivity extends AppCompatActivity {
     }
 
     private void refreshPoll(ImageView refresh) {
-        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF,
-                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        anim.setInterpolator(new LinearInterpolator());
-        anim.setRepeatCount(Animation.INFINITE);
-        anim.setDuration(700);
 
-        refresh.startAnimation(anim);
-        new PollsService().refreshPoll(PollActivity.this, poll.getId(), refresh);
+        if (PollsService.isNetworkAvailable(this)) {
+            RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF,
+                    0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            anim.setInterpolator(new LinearInterpolator());
+            anim.setRepeatCount(Animation.INFINITE);
+            anim.setDuration(700);
+
+            refresh.startAnimation(anim);
+            new PollsService().refreshPoll(PollActivity.this, poll.getId(), refresh);
+        } else {
+            Toast.makeText(this, this.getString(R.string.no_internet), Toast.LENGTH_LONG).show();
+        }
     }
 
 }

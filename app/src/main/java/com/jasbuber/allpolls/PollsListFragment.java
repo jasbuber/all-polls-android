@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.jasbuber.allpolls.models.Poll;
 import com.jasbuber.allpolls.services.PollsService;
@@ -43,7 +44,7 @@ public class PollsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_polls_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_polls_list, container, false);
 
         // Set the adapter
         Context context = view.getContext();
@@ -55,16 +56,41 @@ public class PollsListFragment extends Fragment {
         layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new PollsService().getAvailablePollsList(recyclerView, mListener, layout);
+                if (PollsService.isNetworkAvailable(getActivity())) {
+                    new PollsService().getAvailablePollsList(recyclerView, mListener, layout);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.no_available_polls_label).setVisibility(View.GONE);
+                } else {
+                    layout.setRefreshing(false);
+                    Toast.makeText(getActivity(), getActivity().getString(R.string.no_internet), Toast.LENGTH_LONG).show();
+                    if (((PollsListAdapter) recyclerView.getAdapter()).getPolls().size() == 0) {
+                        recyclerView.setVisibility(View.GONE);
+                        view.findViewById(R.id.no_available_polls_label).setVisibility(View.VISIBLE);
+                    }
+                }
             }
         });
 
         if (savedInstanceState != null) {
             List<Poll> polls = (List<Poll>) savedInstanceState.getSerializable("polls");
             this.recyclerView.setAdapter(new PollsListAdapter(polls, mListener));
+
+            if (polls == null || polls.isEmpty()) {
+                this.recyclerView.setVisibility(View.GONE);
+                view.findViewById(R.id.no_available_polls_label).setVisibility(View.VISIBLE);
+            }
         } else {
-            layout.setRefreshing(true);
-            new PollsService().getAvailablePollsList(recyclerView, mListener, layout);
+            if (PollsService.isNetworkAvailable(getActivity())) {
+                layout.setRefreshing(true);
+                new PollsService().getAvailablePollsList(recyclerView, mListener, layout);
+                this.recyclerView.setVisibility(View.VISIBLE);
+                view.findViewById(R.id.no_available_polls_label).setVisibility(View.GONE);
+            } else {
+                this.recyclerView.setAdapter(new PollsListAdapter(new ArrayList<Poll>(), mListener));
+                this.recyclerView.setVisibility(View.GONE);
+                Toast.makeText(getActivity(), getActivity().getString(R.string.no_internet), Toast.LENGTH_LONG).show();
+                view.findViewById(R.id.no_available_polls_label).setVisibility(View.VISIBLE);
+            }
         }
 
         return view;

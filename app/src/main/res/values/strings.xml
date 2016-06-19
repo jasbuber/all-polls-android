@@ -13,4 +13,7 @@
     <string name="poll_deleted">Poll removed from favorites</string>
 
     <string name="no_my_polls">You have no polls in your favorites.</string>
+    <string name="no_available_polls">Swipe down after internet connection is available. </string>
+    <string name="no_internet">No internet connection available.</string>
+    <string name="no_adding_to_favorites">Adding to favorites not possible. Refresh poll.</string>
 </resources>
