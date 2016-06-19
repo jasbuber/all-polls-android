@@ -53,11 +53,13 @@ public class PollActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_to_my_polls);
+        final ImageButton refresh = (ImageButton) findViewById(R.id.refresh_poll);
 
         if (savedInstanceState != null) {
             restoreInstance(savedInstanceState, fab);
+            refreshPoll(refresh);
         } else {
-            initializeNewInstance(fab);
+            initializeNewInstance(fab, refresh);
         }
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -78,15 +80,12 @@ public class PollActivity extends AppCompatActivity {
             }
         });
 
-        final ImageButton refresh = (ImageButton) findViewById(R.id.refresh_poll);
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 refreshPoll(refresh);
             }
         });
-
-        refreshPoll(refresh);
     }
 
     public void displayPieChart(Poll poll) {
@@ -159,7 +158,7 @@ public class PollActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeNewInstance(FloatingActionButton fab) {
+    private void initializeNewInstance(FloatingActionButton fab, ImageButton but) {
         InternalPollService service = new InternalPollService(new PollRepository());
 
         if (getIntent().getSerializableExtra("poll") != null) {
@@ -179,6 +178,7 @@ public class PollActivity extends AppCompatActivity {
             Poll poll = service.getPoll(id);
             new PollCalculator().calculateResults(poll);
             displayPieChart(poll);
+            refreshPoll(but);
         }
     }
 
