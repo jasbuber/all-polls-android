@@ -10,7 +10,6 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +25,6 @@ import com.jasbuber.allpolls.services.PollsService;
 import com.jasbuber.allpolls.services.ProviderService;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -114,7 +111,10 @@ public class PollActivity extends AppCompatActivity {
             partialLayout.addView(adapter.getView(i, null, null));
         }
 
-        findViewById(R.id.refresh_poll).clearAnimation();
+        ImageButton refresh = (ImageButton) findViewById(R.id.refresh_poll);
+        refresh.clearAnimation();
+        refresh.setEnabled(true);
+
         if (isFavorite) {
             new InternalPollService(new PollRepository()).createOrUpdatePoll(poll);
         }
@@ -169,7 +169,9 @@ public class PollActivity extends AppCompatActivity {
             }
 
             if (PollsService.isNetworkAvailable(this)) {
-                new ProviderService().getPartialPollsFromProvider(this, poll);
+                but.startAnimation(getRotateAnimation());
+                but.setEnabled(false);
+                new ProviderService().getPartialPollsFromProvider(this, poll, but);
             } else {
                 if (pollExists) {
                     Poll dbPoll = service.getPoll(poll.getId());
@@ -216,20 +218,24 @@ public class PollActivity extends AppCompatActivity {
         }
     }
 
-    private void refreshPoll(ImageView refresh) {
+    private void refreshPoll(ImageButton refresh) {
 
         if (PollsService.isNetworkAvailable(this)) {
-            RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF,
-                    0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            anim.setInterpolator(new LinearInterpolator());
-            anim.setRepeatCount(Animation.INFINITE);
-            anim.setDuration(700);
-
-            refresh.startAnimation(anim);
-            new PollsService().refreshPoll(PollActivity.this, poll.getId(), refresh);
+            refresh.startAnimation(getRotateAnimation());
+            refresh.setEnabled(false);
+            new PollsService().refreshPoll(PollActivity.this, poll, refresh);
         } else {
             Toast.makeText(this, this.getString(R.string.no_internet), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private RotateAnimation getRotateAnimation() {
+        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(Animation.INFINITE);
+        anim.setDuration(700);
+        return anim;
     }
 
 }

@@ -6,11 +6,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.jasbuber.allpolls.OnListFragmentInteractionListener;
 import com.jasbuber.allpolls.PollActivity;
 import com.jasbuber.allpolls.PollsListAdapter;
+import com.jasbuber.allpolls.R;
 import com.jasbuber.allpolls.models.Poll;
 
 import java.util.List;
@@ -38,8 +40,8 @@ public class PollsService {
         Call<Poll> refreshPoll(@Query("id") long id);
     }
 
-    public void getAvailablePollsList(final RecyclerView view, final OnListFragmentInteractionListener mListener,
-                                      final SwipeRefreshLayout layout) {
+    public void getAvailablePollsList(final Activity activity, final RecyclerView view,
+                                      final OnListFragmentInteractionListener mListener, final SwipeRefreshLayout layout) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -60,11 +62,12 @@ public class PollsService {
             @Override
             public void onFailure(Call<List<Poll>> call, Throwable t) {
                 layout.setRefreshing(false);
+                Toast.makeText(activity, activity.getString(R.string.unexpected_error), Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    public void refreshPoll(final PollActivity activity, final long id, final ImageView loader) {
+    public void refreshPoll(final PollActivity activity, final Poll poll, final ImageButton loader) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -73,17 +76,17 @@ public class PollsService {
 
         MainServerService service = retrofit.create(MainServerService.class);
 
-        Call<Poll> call = service.refreshPoll(id);
+        Call<Poll> call = service.refreshPoll(poll.getId());
 
         call.enqueue(new Callback<Poll>() {
             @Override
             public void onResponse(Call<Poll> call, Response<Poll> response) {
-                new ProviderService().getPartialPollsFromProvider(activity, response.body());
+                new ProviderService().getPartialPollsFromProvider(activity, response.body(), loader);
             }
 
             @Override
             public void onFailure(Call<Poll> call, Throwable t) {
-                loader.clearAnimation();
+                new ProviderService().getPartialPollsFromProvider(activity, poll, loader);
             }
         });
     }

@@ -1,11 +1,13 @@
 package com.jasbuber.allpolls.services;
 
-import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jasbuber.allpolls.PollActivity;
+import com.jasbuber.allpolls.R;
 import com.jasbuber.allpolls.models.Poll;
 
 import java.util.HashMap;
@@ -30,7 +32,7 @@ public class ProviderService {
         Call<JsonArray> getPartialPolls(@Query("topic") String topic);
     }
 
-    public void getPartialPollsFromProvider(final PollActivity activity, final Poll poll) {
+    public void getPartialPollsFromProvider(final PollActivity activity, final Poll poll, final ImageButton but) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -57,11 +59,15 @@ public class ProviderService {
 
                 new ProviderDataConverter().fillPollWithProviderData(poll, results);
                 activity.displayPieChart(poll);
+                but.clearAnimation();
+                but.setEnabled(true);
             }
 
             @Override
             public void onFailure(Call<JsonArray> call, Throwable t) {
-                Log.e("tagBle", t.getMessage());
+                but.clearAnimation();
+                but.setEnabled(true);
+                Toast.makeText(activity, activity.getString(R.string.unexpected_error), Toast.LENGTH_LONG).show();
             }
         });
     }
