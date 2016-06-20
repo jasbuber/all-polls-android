@@ -10,6 +10,8 @@ import com.jasbuber.allpolls.models.Poll;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,11 +21,15 @@ import java.util.Locale;
  */
 public class ProviderDataConverter {
 
+    public static final int POLSTERS_NR = 10;
+
     public Poll fillPollWithProviderData(Poll poll, HashMap<String, JsonObject> data) {
 
         List<PartialPoll> toDelete = new ArrayList<>();
 
-        for (PartialPoll partial : poll.getPartialPolls()) {
+        List<PartialPoll> partialPolls = poll.getPartialPolls();
+
+        for (PartialPoll partial : partialPolls) {
             if (data.get(partial.getPollster()) != null) {
                 fetchPartialPollData(partial, data.get(partial.getPollster()), poll.getRemoteId());
             } else {
@@ -31,7 +37,17 @@ public class ProviderDataConverter {
             }
         }
 
-        poll.getPartialPolls().removeAll(toDelete);
+        partialPolls.removeAll(toDelete);
+
+        Collections.sort(partialPolls, new Comparator<PartialPoll>() {
+            public int compare(PartialPoll p1, PartialPoll p2) {
+                return p2.getLastUpdated().compareTo(p1.getLastUpdated());
+            }
+        });
+
+        if (partialPolls.size() >= POLSTERS_NR) {
+            poll.setPartialPolls(partialPolls.subList(0, POLSTERS_NR - 1));
+        }
 
         new PollCalculator().calculateResults(poll);
         return poll;

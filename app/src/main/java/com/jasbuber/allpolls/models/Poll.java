@@ -72,5 +72,9 @@ public class Poll implements Serializable {
     public String getRemoteId() {
         return remoteId;
     }
+
+    public void setPartialPolls(List<PartialPoll> partialPolls) {
+        this.partialPolls = partialPolls;
+    }
 }
 

@@ -107,12 +107,6 @@ public class PollActivity extends AppCompatActivity {
         LinearLayout partialLayout = (LinearLayout) findViewById(R.id.poll_partial_polls);
         partialLayout.removeAllViews();
 
-        Collections.sort(poll.getPartialPolls(), new Comparator<PartialPoll>() {
-            public int compare(PartialPoll p1, PartialPoll p2) {
-                return p2.getLastUpdated().compareTo(p1.getLastUpdated());
-            }
-        });
-
         PartialPollsAdapter adapter = new PartialPollsAdapter(this, poll.getPartialPolls());
 
         for (int i = 0; i < adapter.getCount(); i++) {
