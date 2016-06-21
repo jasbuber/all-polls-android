@@ -7,12 +7,10 @@ import android.net.NetworkInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.jasbuber.allpolls.OnListFragmentInteractionListener;
 import com.jasbuber.allpolls.PollActivity;
 import com.jasbuber.allpolls.PollsListAdapter;
-import com.jasbuber.allpolls.R;
 import com.jasbuber.allpolls.models.Poll;
 
 import java.util.List;
@@ -62,7 +60,6 @@ public class PollsService {
             @Override
             public void onFailure(Call<List<Poll>> call, Throwable t) {
                 layout.setRefreshing(false);
-                Toast.makeText(activity, activity.getString(R.string.unexpected_error), Toast.LENGTH_LONG).show();
             }
         });
     }

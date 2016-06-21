@@ -80,13 +80,14 @@ public class PollsListFragment extends Fragment {
                 view.findViewById(R.id.no_available_polls_label).setVisibility(View.VISIBLE);
             }
         } else {
+            this.recyclerView.setAdapter(new PollsListAdapter(new ArrayList<Poll>(), mListener));
+
             if (PollsService.isNetworkAvailable(getActivity())) {
-                layout.setRefreshing(true);
-                new PollsService().getAvailablePollsList(PollsListFragment.this.getActivity(), recyclerView, mListener, layout);
                 this.recyclerView.setVisibility(View.VISIBLE);
+                new PollsService().getAvailablePollsList(PollsListFragment.this.getActivity(), recyclerView, mListener, layout);
                 view.findViewById(R.id.no_available_polls_label).setVisibility(View.GONE);
             } else {
-                this.recyclerView.setAdapter(new PollsListAdapter(new ArrayList<Poll>(), mListener));
+
                 this.recyclerView.setVisibility(View.GONE);
                 Toast.makeText(getActivity(), getActivity().getString(R.string.no_internet), Toast.LENGTH_LONG).show();
                 view.findViewById(R.id.no_available_polls_label).setVisibility(View.VISIBLE);
@@ -98,8 +99,10 @@ public class PollsListFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        List<Poll> polls = ((PollsListAdapter) recyclerView.getAdapter()).getPolls();
-        savedInstanceState.putParcelableArrayList("polls", (ArrayList) polls);
+        if(recyclerView.getAdapter() != null) {
+            List<Poll> polls = ((PollsListAdapter) recyclerView.getAdapter()).getPolls();
+            savedInstanceState.putParcelableArrayList("polls", (ArrayList) polls);
+        }
     }
 
     @Override
