@@ -79,4 +79,8 @@ public class PartialPoll implements Serializable {
             universalValues.add(choice.getUniversalValue());
         }
     }
+
+    public void setPollerChoices(List<PartialPollChoice> pollerChoices) {
+        this.pollerChoices = pollerChoices;
+    }
 }

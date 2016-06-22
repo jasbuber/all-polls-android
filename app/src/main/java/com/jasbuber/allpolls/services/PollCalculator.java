@@ -5,19 +5,18 @@ import com.jasbuber.allpolls.models.PartialPollChoice;
 import com.jasbuber.allpolls.models.Poll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Jasbuber on 11/06/2016.
  */
 public class PollCalculator {
 
-    Set<String> universalValues;
+    ArrayList<String> universalValues;
 
     public Poll calculateResults(Poll poll) {
 
@@ -25,31 +24,45 @@ public class PollCalculator {
 
         List<PartialPoll> partialPolls = poll.getPartialPolls();
 
-        universalValues = new HashSet<>();
+        universalValues = new ArrayList<>();
 
         for (PartialPoll partial : partialPolls) {
             if (universalValues.isEmpty()) {
-                universalValues = partial.getUniversalValues();
+                universalValues.addAll(partial.getUniversalValues());
             } else {
                 universalValues.retainAll(partial.getUniversalValues());
             }
         }
 
         for (PartialPoll partial : partialPolls) {
-            Collection<PartialPollChoice> choices = partial.getPollerChoices();
-            Map<String, Double> partChoices = new HashMap<>();
+            List<PartialPollChoice> choices = (ArrayList) partial.getPollerChoices();
+            PartialPollChoice[] universalChoices = new PartialPollChoice[universalValues.size()];
+            List<PartialPollChoice> otherChoices = new ArrayList<>();
+
+            Map<String, Double> partChoices = new LinkedHashMap<>();
 
             Double total = 0.0;
             boolean isRecalculate = false;
 
             for (PartialPollChoice choice : choices) {
-                if (universalValues.contains(choice.getUniversalValue())) {
-                    partChoices.put(choice.getUniversalValue(), choice.getValue());
+
+                String universalValue = choice.getUniversalValue();
+
+                if (universalValues.contains(universalValue)) {
+                    partChoices.put(universalValue, choice.getValue());
                     total += choice.getValue();
+
+                    int index = universalValues.indexOf(universalValue);
+                    universalChoices[index] = choice;
                 } else {
+                    otherChoices.add(choice);
                     isRecalculate = true;
                 }
             }
+
+            ArrayList<PartialPollChoice> orderedChoices = new ArrayList<>(Arrays.asList(universalChoices));
+            orderedChoices.addAll(otherChoices);
+            partial.setPollerChoices(orderedChoices);
             double difference = 100.0 - total;
 
             partChoices.put(PartialPollChoice.UNDECIDED, difference);
@@ -70,7 +83,7 @@ public class PollCalculator {
     private Map<String, Double> getRecalculatedMap(Map<String, Double> choicesMap) {
 
         double sum = 0.0;
-        Map<String, Double> newMap = new HashMap<>();
+        Map<String, Double> newMap = new LinkedHashMap<>();
 
         for (Double choice : choicesMap.values()) {
             sum += choice;
@@ -83,9 +96,9 @@ public class PollCalculator {
         return newMap;
     }
 
-    private HashMap<String, Double> getFinalResults(List<Map<String, Double>> choicesList) {
+    private LinkedHashMap<String, Double> getFinalResults(List<Map<String, Double>> choicesList) {
 
-        HashMap<String, Double> result = new HashMap<>();
+        LinkedHashMap<String, Double> result = new LinkedHashMap<>();
 
         for (String universalValue : universalValues) {
             double newValue = 0.0;
@@ -102,7 +115,7 @@ public class PollCalculator {
     public Map<String, Double> calculatePartialResults(PartialPoll poll) {
 
         Collection<PartialPollChoice> choices = poll.getPollerChoices();
-        Map<String, Double> partChoices = new HashMap<>();
+        Map<String, Double> partChoices = new LinkedHashMap<>();
 
         Double total = 0.0;
         boolean isRecalculate = false;
