@@ -6,11 +6,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageButton;
 
 import com.jasbuber.allpolls.OnListFragmentInteractionListener;
 import com.jasbuber.allpolls.PollActivity;
 import com.jasbuber.allpolls.PollsListAdapter;
+import com.jasbuber.allpolls.R;
 import com.jasbuber.allpolls.models.Poll;
 
 import java.util.List;
@@ -54,12 +56,17 @@ public class PollsService {
             @Override
             public void onResponse(Call<List<Poll>> call, Response<List<Poll>> response) {
                 view.setAdapter(new PollsListAdapter(response.body(), mListener));
+                view.setVisibility(View.VISIBLE);
                 layout.setRefreshing(false);
+                activity.findViewById(R.id.no_server_connection).setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<List<Poll>> call, Throwable t) {
                 layout.setRefreshing(false);
+                if( view.getAdapter().getItemCount() == 0) {
+                    activity.findViewById(R.id.no_server_connection).setVisibility(View.VISIBLE);
+                }
             }
         });
     }

@@ -84,6 +84,12 @@ public class PollsListFragment extends Fragment {
 
             if (PollsService.isNetworkAvailable(getActivity())) {
                 this.recyclerView.setVisibility(View.VISIBLE);
+                layout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        layout.setRefreshing(true);
+                    }
+                });
                 new PollsService().getAvailablePollsList(PollsListFragment.this.getActivity(), recyclerView, mListener, layout);
                 view.findViewById(R.id.no_available_polls_label).setVisibility(View.GONE);
             } else {
