@@ -30,6 +30,8 @@ public class PollORM extends RealmObject {
 
     Date expirationDate;
 
+    String location;
+
     public PollORM() {
     }
 
@@ -42,6 +44,7 @@ public class PollORM extends RealmObject {
         this.topic = poll.getTopic();
         this.remoteId = poll.getRemoteId();
         this.expirationDate = poll.getExpirationDate();
+        this.location = poll.getLocation();
 
         for (PartialPoll partial : poll.getPartialPolls()) {
             this.partialPolls.add(new PartialPollORM(partial));
@@ -77,5 +80,9 @@ public class PollORM extends RealmObject {
 
     public String getRemoteId() {
         return remoteId;
+    }
+
+    public String getLocation() {
+        return location;
     }
 }

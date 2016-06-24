@@ -24,6 +24,8 @@ public class Poll implements Serializable {
 
     Date expirationDate;
 
+    String location;
+
     public Poll() {
     }
 
@@ -32,6 +34,7 @@ public class Poll implements Serializable {
         this.topic = poll.getTopic();
         this.remoteId = poll.getRemoteId();
         this.expirationDate = poll.getExpirationDate();
+        this.location = poll.getLocation();
 
         partialPolls = new ArrayList<>();
         for (PartialPollORM partial : poll.getPartialPolls()) {
@@ -75,6 +78,10 @@ public class Poll implements Serializable {
 
     public void setPartialPolls(List<PartialPoll> partialPolls) {
         this.partialPolls = partialPolls;
+    }
+
+    public String getLocation() {
+        return location;
     }
 }
 

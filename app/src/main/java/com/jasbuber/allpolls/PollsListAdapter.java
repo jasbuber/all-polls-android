@@ -30,7 +30,8 @@ public class PollsListAdapter extends RecyclerView.Adapter<PollsListAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.poll = polls.get(position);
-        holder.mIdView.setText(polls.get(position).getTopic());
+        holder.mIdView.setText(holder.poll.getTopic());
+        holder.locationView.setText(holder.poll.getLocation());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,12 +51,14 @@ public class PollsListAdapter extends RecyclerView.Adapter<PollsListAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
+        public final TextView locationView;
         public Poll poll;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
+            locationView = (TextView) view.findViewById(R.id.poll_location);
         }
 
         @Override
