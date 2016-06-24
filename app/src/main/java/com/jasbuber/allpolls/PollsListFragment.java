@@ -57,7 +57,7 @@ public class PollsListFragment extends Fragment {
             @Override
             public void onRefresh() {
                 if (PollsService.isNetworkAvailable(getActivity())) {
-                    new PollsService().getAvailablePollsList(PollsListFragment.this.getActivity(), recyclerView, mListener, layout);
+                    new PollsService().getAvailablePollsList(PollsListFragment.this.getActivity(), recyclerView, mListener, layout, null);
                     recyclerView.setVisibility(View.VISIBLE);
                     view.findViewById(R.id.no_available_polls_label).setVisibility(View.GONE);
                 } else {
@@ -84,13 +84,16 @@ public class PollsListFragment extends Fragment {
 
             if (PollsService.isNetworkAvailable(getActivity())) {
                 this.recyclerView.setVisibility(View.VISIBLE);
-                layout.post(new Runnable() {
+
+                Runnable callback = new Runnable() {
                     @Override
                     public void run() {
                         layout.setRefreshing(true);
                     }
-                });
-                new PollsService().getAvailablePollsList(PollsListFragment.this.getActivity(), recyclerView, mListener, layout);
+                };
+
+                layout.post(callback);
+                new PollsService().getAvailablePollsList(PollsListFragment.this.getActivity(), recyclerView, mListener, layout, callback);
                 view.findViewById(R.id.no_available_polls_label).setVisibility(View.GONE);
             } else {
 
@@ -105,7 +108,7 @@ public class PollsListFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        if(recyclerView.getAdapter() != null) {
+        if (recyclerView.getAdapter() != null) {
             List<Poll> polls = ((PollsListAdapter) recyclerView.getAdapter()).getPolls();
             savedInstanceState.putParcelableArrayList("polls", (ArrayList) polls);
         }

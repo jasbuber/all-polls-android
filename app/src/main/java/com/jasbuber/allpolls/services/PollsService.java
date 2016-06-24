@@ -40,8 +40,8 @@ public class PollsService {
         Call<Poll> refreshPoll(@Query("id") long id);
     }
 
-    public void getAvailablePollsList(final Activity activity, final RecyclerView view,
-                                      final OnListFragmentInteractionListener mListener, final SwipeRefreshLayout layout) {
+    public void getAvailablePollsList(final Activity activity, final RecyclerView view, final OnListFragmentInteractionListener mListener,
+                                      final SwipeRefreshLayout layout, final Runnable callback) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -58,13 +58,16 @@ public class PollsService {
                 view.setAdapter(new PollsListAdapter(response.body(), mListener));
                 view.setVisibility(View.VISIBLE);
                 layout.setRefreshing(false);
+                if (callback != null) {
+                    layout.removeCallbacks(callback);
+                }
                 activity.findViewById(R.id.no_server_connection).setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<List<Poll>> call, Throwable t) {
                 layout.setRefreshing(false);
-                if( view.getAdapter().getItemCount() == 0) {
+                if (view.getAdapter().getItemCount() == 0) {
                     activity.findViewById(R.id.no_server_connection).setVisibility(View.VISIBLE);
                 }
             }
