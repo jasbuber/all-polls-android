@@ -46,7 +46,7 @@ public class ProviderDataConverter {
         });
 
         if (partialPolls.size() >= POLSTERS_NR) {
-            poll.setPartialPolls(partialPolls.subList(0, POLSTERS_NR - 1));
+            poll.setPartialPolls(new ArrayList<>(partialPolls.subList(0, POLSTERS_NR - 1)));
         }
 
         new PollCalculator().calculateResults(poll);
