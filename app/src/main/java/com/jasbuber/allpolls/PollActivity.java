@@ -42,6 +42,8 @@ public class PollActivity extends AppCompatActivity {
 
     boolean isFavorite = false;
 
+    private static final Double LABEL_DISPLAY_TRESHOLD = 7.0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +97,13 @@ public class PollActivity extends AppCompatActivity {
         ChartDisplayService service = new ChartDisplayService();
         pieChart = (PieChart) findViewById(R.id.poll_pie_chart);
         pieChart.setData(service.generatePieData(poll.getResults()));
+
+        for(Double value : poll.getResults().values()){
+            if(value < LABEL_DISPLAY_TRESHOLD){
+                pieChart.setDrawSliceText(false);
+                break;
+            }
+        }
         service.initializeChart(pieChart);
         pieChart.notifyDataSetChanged();
         pieChart.invalidate();
@@ -140,6 +149,14 @@ public class PollActivity extends AppCompatActivity {
         ChartDisplayService service = new ChartDisplayService();
         partialChart.setData(service.generatePieData(partialResults));
         service.initializeChart(partialChart);
+
+        for(Double value : partialResults.values()){
+            if(value < LABEL_DISPLAY_TRESHOLD){
+                partialChart.setDrawSliceText(false);
+                break;
+            }
+        }
+
         partialChart.notifyDataSetChanged();
         partialChart.invalidate();
 
