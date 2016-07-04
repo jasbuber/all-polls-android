@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.jasbuber.allpolls.PollActivity;
 import com.jasbuber.allpolls.R;
 import com.jasbuber.allpolls.models.Poll;
+import com.jasbuber.allpolls.repositories.PollRepository;
 
 import java.util.HashMap;
 
@@ -58,6 +59,12 @@ public class ProviderService {
                 }
 
                 new ProviderDataConverter().fillPollWithProviderData(poll, results);
+
+                InternalPollService service = new InternalPollService(new PollRepository());
+
+                if(service.pollExists(poll.getId())) {
+                    service.createOrUpdatePoll(poll);
+                }
                 activity.displayPieChart(poll);
                 but.clearAnimation();
                 but.setEnabled(true);
