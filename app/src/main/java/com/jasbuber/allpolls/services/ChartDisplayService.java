@@ -7,10 +7,13 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -33,6 +36,15 @@ public class ChartDisplayService {
         }
 
         PieDataSet ds1 = new PieDataSet(values, "");
+        ds1.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                if ((value % 1) == 0) {
+                    return String.format(Locale.US, "%.1f", value);
+                }
+                return String.format(Locale.US, "%.2f", value);
+            }
+        });
         ds1.setColors(ColorTemplate.PASTEL_COLORS);
         ds1.setSliceSpace(2f);
         ds1.setValueTextColor(Color.WHITE);
