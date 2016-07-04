@@ -128,7 +128,9 @@ public class PollCalculator {
 
         if (Math.abs(difference) > 0.1) {
             isRecalculate = true;
-            partChoices.put(PartialPollChoice.UNDECIDED, difference);
+            if(difference > 0) {
+                partChoices.put(PartialPollChoice.UNDECIDED, difference);
+            }
         }
 
         if (isRecalculate) {
