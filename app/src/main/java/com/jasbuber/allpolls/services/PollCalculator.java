@@ -7,6 +7,7 @@ import com.jasbuber.allpolls.models.Poll;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,8 @@ public class PollCalculator {
                 universalValues.retainAll(partial.getUniversalValues());
             }
         }
+
+        Collections.sort(universalValues);
 
         for (PartialPoll partial : partialPolls) {
             List<PartialPollChoice> choices = (ArrayList) partial.getPollerChoices();
