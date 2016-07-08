@@ -39,11 +39,7 @@ public class ProviderDataConverter {
 
         partialPolls.removeAll(toDelete);
 
-        Collections.sort(partialPolls, new Comparator<PartialPoll>() {
-            public int compare(PartialPoll p1, PartialPoll p2) {
-                return p2.getLastUpdated().compareTo(p1.getLastUpdated());
-            }
-        });
+        poll.sortPartialsByDateDesc();
 
         if (partialPolls.size() >= POLSTERS_NR) {
             poll.setPartialPolls(new ArrayList<>(partialPolls.subList(0, POLSTERS_NR - 1)));

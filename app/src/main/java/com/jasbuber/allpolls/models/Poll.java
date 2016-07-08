@@ -5,6 +5,8 @@ import com.jasbuber.allpolls.models.orm.PollORM;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +84,14 @@ public class Poll implements Serializable {
 
     public String getLocation() {
         return location;
+    }
+
+    public void sortPartialsByDateDesc() {
+        Collections.sort(partialPolls, new Comparator<PartialPoll>() {
+            public int compare(PartialPoll p1, PartialPoll p2) {
+                return p2.getLastUpdated().compareTo(p1.getLastUpdated());
+            }
+        });
     }
 }
 
