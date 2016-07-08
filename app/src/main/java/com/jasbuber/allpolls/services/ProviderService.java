@@ -35,6 +35,22 @@ public class ProviderService {
 
     public void getPartialPollsFromProvider(final PollActivity activity, final Poll poll, final ImageButton but) {
 
+        if (poll.getRemoteId().isEmpty()) {
+            poll.sortPartialsByDateDesc();
+            new PollCalculator().calculateResults(poll);
+
+            InternalPollService service = new InternalPollService(new PollRepository());
+
+            if (service.pollExists(poll.getId())) {
+                service.createOrUpdatePoll(poll);
+            }
+            activity.displayPieChart(poll);
+            but.clearAnimation();
+            but.setEnabled(true);
+
+            return;
+        }
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -62,7 +78,7 @@ public class ProviderService {
 
                 InternalPollService service = new InternalPollService(new PollRepository());
 
-                if(service.pollExists(poll.getId())) {
+                if (service.pollExists(poll.getId())) {
                     service.createOrUpdatePoll(poll);
                 }
                 activity.displayPieChart(poll);
