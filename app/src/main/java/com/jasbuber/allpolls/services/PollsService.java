@@ -30,7 +30,7 @@ import retrofit2.http.Query;
  */
 public class PollsService {
 
-    private static final String baseUrl = "http://192.168.100.189:9000/";
+    private static final String baseUrl = "https://allpolls.herokuapp.com/";
 
     public interface MainServerService {
         @GET("allpolls")
