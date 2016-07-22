@@ -50,6 +50,10 @@ public class MyPollsAdapter extends RecyclerView.Adapter<MyPollsAdapter.ViewHold
         holder.mChart.getLegend().setEnabled(false);
         holder.mChart.setDrawSliceText(false);
 
+        if(poll.getResults().size() > 5){
+            holder.mChart.getData().setDrawValues(false);
+        }
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
