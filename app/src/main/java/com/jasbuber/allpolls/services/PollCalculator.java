@@ -109,7 +109,10 @@ public class PollCalculator {
                 newValue += partial.get(universalValue);
             }
             newValue = newValue / choicesList.size();
-            result.put(universalValue, newValue);
+
+            if(newValue > 0.1) {
+                result.put(universalValue, newValue);
+            }
         }
 
         return result;
