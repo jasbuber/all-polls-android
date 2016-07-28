@@ -16,7 +16,9 @@ import com.jasbuber.allpolls.R;
 import com.jasbuber.allpolls.models.Poll;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,6 +48,7 @@ public class PollsService {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(getClient())
                 .build();
 
         MainServerService service = retrofit.create(MainServerService.class);
@@ -79,6 +82,7 @@ public class PollsService {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(getClient())
                 .build();
 
         MainServerService service = retrofit.create(MainServerService.class);
@@ -103,6 +107,14 @@ public class PollsService {
                 = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private OkHttpClient getClient() {
+        return new OkHttpClient().newBuilder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
     }
 
 }
