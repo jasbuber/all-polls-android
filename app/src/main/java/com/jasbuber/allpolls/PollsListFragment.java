@@ -81,26 +81,7 @@ public class PollsListFragment extends Fragment {
             }
         } else {
             this.recyclerView.setAdapter(new PollsListAdapter(new ArrayList<Poll>(), mListener));
-
-            if (PollsService.isNetworkAvailable(getActivity())) {
-                this.recyclerView.setVisibility(View.VISIBLE);
-
-                Runnable callback = new Runnable() {
-                    @Override
-                    public void run() {
-                        layout.setRefreshing(true);
-                    }
-                };
-
-                layout.post(callback);
-                new PollsService().getAvailablePollsList(PollsListFragment.this.getActivity(), recyclerView, mListener, layout, callback);
-                view.findViewById(R.id.no_available_polls_label).setVisibility(View.GONE);
-            } else {
-
-                this.recyclerView.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), getActivity().getString(R.string.no_internet), Toast.LENGTH_LONG).show();
-                view.findViewById(R.id.no_available_polls_label).setVisibility(View.VISIBLE);
-            }
+            refreshPollsList(layout, view);
         }
 
         return view;
@@ -124,6 +105,28 @@ public class PollsListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void refreshPollsList(final SwipeRefreshLayout layout, final View container){
+        if (PollsService.isNetworkAvailable(getActivity())) {
+            this.recyclerView.setVisibility(View.VISIBLE);
+
+            Runnable callback = new Runnable() {
+                @Override
+                public void run() {
+                    layout.setRefreshing(true);
+                }
+            };
+
+            layout.post(callback);
+            new PollsService().getAvailablePollsList(PollsListFragment.this.getActivity(), recyclerView, mListener, layout, callback);
+            container.findViewById(R.id.no_available_polls_label).setVisibility(View.GONE);
+        } else {
+
+            this.recyclerView.setVisibility(View.GONE);
+            Toast.makeText(getActivity(), getActivity().getString(R.string.no_internet), Toast.LENGTH_LONG).show();
+            container.findViewById(R.id.no_available_polls_label).setVisibility(View.VISIBLE);
+        }
     }
 
 }
