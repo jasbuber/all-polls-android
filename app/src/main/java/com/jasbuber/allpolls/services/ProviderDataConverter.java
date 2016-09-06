@@ -53,8 +53,14 @@ public class ProviderDataConverter {
     private PartialPoll fetchPartialPollData(PartialPoll partial, JsonObject data, String topic) {
 
         try {
-            partial.setLastUpdated(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US)
-                    .parse(data.get("last_updated").getAsString()));
+            String unparsedDate = data.get("last_updated").getAsString();
+            if(unparsedDate.contains(".")){
+                partial.setLastUpdated(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US)
+                        .parse(unparsedDate));
+            }else{
+                partial.setLastUpdated(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+                        .parse(unparsedDate));
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
